@@ -1,0 +1,90 @@
+//rfc
+import { useContext, useState } from "react";
+import { toast } from "react-toastify";
+import { MovieContext } from "../Context";
+import { getImageUrl } from "../utility/utilitys";
+import MovieDetailsModel from "./MovieDetailsModel";
+import Rating from "./Rating";
+
+export default function MovieCard({ movie }) {
+  const [showModel, setShowModel] = useState(false);
+  const [selectedMovie, setselectedMovie] = useState(null);
+
+  // const { cartData, setCartData } = useContext(MovieContext); // use reducer
+  const { state, dispatch } = useContext(MovieContext);
+
+  function handleAddToCart(e, movie) {
+    e.stopPropagation();
+
+    const found = state.cartData.find((item) => {
+      return item.id === movie.id;
+    });
+
+    if (!found) {
+      // setCartData([...cartData, movie]);
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: {
+          ...movie,
+        },
+      });
+
+      toast.success(`Movie ${movie.title} add successfully`);
+      {
+        toast.POSITION.BOTTOM_RIGHT;
+      }
+    } else {
+      toast.error(`Movie ${movie.title} has been added to the cart already`);
+      {
+        toast.POSITION.BOTTOM_RIGHT;
+      }
+    }
+  }
+
+  function handleModalClose() {
+    setselectedMovie(null);
+    setShowModel(false);
+  }
+  function handleMovieSelection(movie) {
+    setselectedMovie(movie);
+    setShowModel(true);
+  }
+
+  return (
+    <>
+      {showModel && (
+        <MovieDetailsModel
+          movie={selectedMovie}
+          Onclose={handleModalClose}
+          onCardtAdd={handleAddToCart}
+        />
+      )}
+
+      <figure className="p-4 border border-black/10 shadow-sm dark:border-white/10 rounded-xl">
+        <a href="#" onClick={() => handleMovieSelection(movie)}>
+          <img
+            className="w-full object-cover"
+            src={getImageUrl(movie.cover)}
+            alt={movie.title}
+          />
+          <figcaption className="pt-4">
+            <h3 className="text-xl mb-1">{movie.title}</h3>
+            <p className="text-[#575A6E] text-sm mb-2">{movie.genre}</p>
+            <div className="flex items-center space-x-1 mb-5">
+              <Rating value={movie.rating} />
+            </div>
+            <button
+              className="bg-primary rounded-lg py-2 px-5 flex items-center justify-center gap-2 text-[#171923] font-semibold text-sm"
+              href="#"
+              onClick={(e) => handleAddToCart(e, movie)}
+            >
+              <img src="./assets/tag.svg" alt="" />
+
+              <span>${movie.price} | Add to Cart</span>
+            </button>
+          </figcaption>
+        </a>
+      </figure>
+    </>
+  );
+}
