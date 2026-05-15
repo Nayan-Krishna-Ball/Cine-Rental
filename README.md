@@ -4,6 +4,7 @@ CineRental is a movie discovery and rental UI built with **React + Vite**, using
 This web app displays movies, allows adding/removing items from a cart, shows detailed movie information, and supports light/dark themes.
 
 ---
+##Live: https://cine-rental-nu-nine.vercel.app/
 
 ## 🚀 Features
 
